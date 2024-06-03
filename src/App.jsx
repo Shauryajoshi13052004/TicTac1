@@ -4,8 +4,8 @@ import TicTacToe from './components/TicTacToe'
 function App() {
   return (
     <>
-      <Tic1/>
-      {/* <TicTacToe/> */}
+      {/* <Tic1/>*/}
+       <TicTacToe/> 
       
     </>
   )
