@@ -17,9 +17,9 @@ function App() {
     if (board[index] || calculateWinner(board)) return;
 
     const newBoard = board.slice();
-    newBoard[index] = isXTurn ? "X" : "O";
+    newBoard[index] = "X";
     setBoard(newBoard);
-    setIsXTurn(!isXTurn);
+    setIsXTurn(false);
   };
 
   const makeComputerMove = () => {
@@ -32,15 +32,15 @@ function App() {
     }
   };
 
-  const getBestMove = (newBoard) => {
+  const getBestMove = (board) => {
     let bestScore = -Infinity;
     let move = null;
 
-    for (let i = 0; i < newBoard.length; i++) {
-      if (newBoard[i] === null) {
-        newBoard[i] = "O";
-        let score = minimax(newBoard, 0, false);
-        newBoard[i] = null;
+    for (let i = 0; i < board.length; i++) {
+      if (board[i] === null) {
+        board[i] = "O";
+        let score = minimax(board, 0, false);
+        board[i] = null;
         if (score > bestScore) {
           bestScore = score;
           move = i;
@@ -50,36 +50,36 @@ function App() {
     return move;
   };
 
-  const minimax = (newBoard, depth, isMaximizing) => {
-    let scores = {
+  const minimax = (board, depth, isMaximizing) => {
+    const scores = {
       X: -1,
       O: 1,
       tie: 0,
     };
 
-    let result = calculateWinner(newBoard);
+    const result = calculateWinner(board);
     if (result !== null) {
-      return scores[result] || scores['tie'];
+      return scores[result];
     }
 
     if (isMaximizing) {
       let bestScore = -Infinity;
-      for (let i = 0; i < newBoard.length; i++) {
-        if (newBoard[i] === null) {
-          newBoard[i] = "O";
-          let score = minimax(newBoard, depth + 1, false);
-          newBoard[i] = null;
+      for (let i = 0; i < board.length; i++) {
+        if (board[i] === null) {
+          board[i] = "O";
+          let score = minimax(board, depth + 1, false);
+          board[i] = null;
           bestScore = Math.max(score, bestScore);
         }
       }
       return bestScore;
     } else {
       let bestScore = Infinity;
-      for (let i = 0; i < newBoard.length; i++) {
-        if (newBoard[i] === null) {
-          newBoard[i] = "X";
-          let score = minimax(newBoard, depth + 1, true);
-          newBoard[i] = null;
+      for (let i = 0; i < board.length; i++) {
+        if (board[i] === null) {
+          board[i] = "X";
+          let score = minimax(board, depth + 1, true);
+          board[i] = null;
           bestScore = Math.min(score, bestScore);
         }
       }
@@ -104,12 +104,14 @@ function App() {
         return squares[a];
       }
     }
-    return squares.includes(null) ? null : 'tie';
+    return squares.includes(null) ? null : "tie";
   };
 
   const winner = calculateWinner(board);
   const status = winner
-    ? winner === 'tie' ? "It's a tie!" : `Winner: ${winner}`
+    ? winner === "tie"
+      ? "It's a tie!"
+      : `Winner: ${winner}`
     : `Next player: ${isXTurn ? "X" : "O"}`;
 
   return (
