@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { PiNumberZeroBold } from "react-icons/pi";
+import { HiMiniXMark } from "react-icons/hi2";
 
+// TicTacToe Component
 const initialBoard = Array(9).fill(null);
 
 const TicTacToe = () => {
@@ -38,9 +41,13 @@ const TicTacToe = () => {
     return (
       <button
         onClick={() => handleClick(index)}
-        className="w-20 h-20 bg-white border-2 border-gray-400 text-2xl font-bold flex items-center justify-center"
+        className="w-24 h-24 bg-slate-600 border-2 border-gray-400 text-2xl font-bold flex items-center justify-center rounded-md"
       >
-        {board[index]}
+        {board[index] === "X" ? (
+          <HiMiniXMark className="h-14 text-blue-500" />
+        ) : board[index] === "O" ? (
+          <PiNumberZeroBold className="h-14 text-orange-500" />
+        ) : null}
       </button>
     );
   };
@@ -48,14 +55,14 @@ const TicTacToe = () => {
   return (
     <>
       <div className="flex flex-col items-center">
-        <div className="grid grid-cols-3 gap-2 w-60 mb-4">
+        <div className="grid grid-cols-3 gap-4 w-72 mb-4">
           {Array(9)
             .fill(null)
             .map((_, index) => (
               <div key={index}>{renderSquare(index)}</div>
             ))}
         </div>
-        {message && <div className="text-2xl">{message}</div>}
+        {message && <div className="text-2xl text-white">{message}</div>}
         <button
           onClick={() => {
             setBoard(initialBoard);
@@ -138,4 +145,28 @@ const minimax = (board, depth, isMax) => {
   }
 };
 
-export default TicTacToe;
+// Layout Component
+const Tac = () => {
+  return (
+    <div className="grid place-items-center bg-slate-800 h-[100vh]">
+      <div className="flex justify-center mb-8">
+        <HiMiniXMark className="h-14 text-blue-500" />
+        <PiNumberZeroBold className="h-14 text-orange-500" />
+      </div>
+      <TicTacToe />
+      <div className="grid grid-cols-3 gap-4 mt-8">
+        <div className="bg-blue-500 items-center justify-center w-24 h-16 rounded-md flex">
+          1
+        </div>
+        <div className="bg-gray-400 items-center justify-center w-24 h-16 rounded-md flex">
+          2
+        </div>
+        <div className="bg-orange-400 items-center justify-center w-24 h-16 rounded-md flex">
+          3
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Tac;
