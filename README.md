@@ -1,11 +1,20 @@
-# React + Vite
+# TicTacToe Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Live on vercel: <b>https://tic-tac1-a6vj.vercel.app/</b>
 
 
-live on : https://shaurya-port-folio.vercel.app/
+A simple TicTacToe game built with React, featuring AI opponent functionality and styled using Tailwind CSS. This project demonstrates basic React state management, hooks, and a minimax algorithm for the AI.
+
+## Features
+
+- Playable TicTacToe game against an AI opponent.
+- Reset functionality to start a new game.
+- Indicates the winner or if the game is a draw.
+- Styled using Tailwind CSS for a modern look.
+
+## Installation
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yourusername/tictactoe.git
+   cd tictactoe
