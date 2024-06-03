@@ -1,10 +1,10 @@
 import React from 'react'
-import Tac from './components/Tac'
+import Tic from './components/Tic'
 import TicTacToe from './components/TicTacToe'
 function App() {
   return (
     <>
-      <Tac/>
+      <Tic/>
       {/* <TicTacToe/> */}
       
     </>
