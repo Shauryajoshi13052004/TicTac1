@@ -1,84 +1,143 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
+import "./App.css";
 
 const initialBoard = Array(9).fill(null);
 
-const checkWinner = (board) => {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-      return board[a];
-    }
-  }
-  return null;
-};
-
-const Game = () => {
+function App() {
   const [board, setBoard] = useState(initialBoard);
-  const [isUserTurn, setIsUserTurn] = useState(true);
+  const [isXTurn, setIsXTurn] = useState(true);
+
+  useEffect(() => {
+    if (!isXTurn && !calculateWinner(board) && board.includes(null)) {
+      makeComputerMove();
+    }
+  }, [isXTurn, board]);
 
   const handleClick = (index) => {
-    if (board[index] || checkWinner(board)) return;
+    if (board[index] || calculateWinner(board)) return;
 
     const newBoard = board.slice();
-    newBoard[index] = isUserTurn ? 'X' : 'O';
+    newBoard[index] = isXTurn ? "X" : "O";
     setBoard(newBoard);
-    setIsUserTurn(!isUserTurn);
+    setIsXTurn(!isXTurn);
+  };
 
-    if (!isUserTurn) {
-      setTimeout(() => makeComputerMove(newBoard), 500);
+  const makeComputerMove = () => {
+    const bestMove = getBestMove(board);
+    if (bestMove !== null) {
+      const newBoard = board.slice();
+      newBoard[bestMove] = "O";
+      setBoard(newBoard);
+      setIsXTurn(true);
     }
   };
 
-  const makeComputerMove = (board) => {
-    const emptyIndices = board.reduce((acc, val, idx) => (val === null ? acc.concat(idx) : acc), []);
-    if (emptyIndices.length === 0) return;
+  const getBestMove = (newBoard) => {
+    let bestScore = -Infinity;
+    let move = null;
 
-    const randomIndex = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
-    board[randomIndex] = 'O';
-    setBoard(board);
-    setIsUserTurn(true);
+    for (let i = 0; i < newBoard.length; i++) {
+      if (newBoard[i] === null) {
+        newBoard[i] = "O";
+        let score = minimax(newBoard, 0, false);
+        newBoard[i] = null;
+        if (score > bestScore) {
+          bestScore = score;
+          move = i;
+        }
+      }
+    }
+    return move;
   };
 
-  const winner = checkWinner(board);
-  const isDraw = board.every((cell) => cell) && !winner;
+  const minimax = (newBoard, depth, isMaximizing) => {
+    let scores = {
+      X: -1,
+      O: 1,
+      tie: 0,
+    };
+
+    let result = calculateWinner(newBoard);
+    if (result !== null) {
+      return scores[result] || scores['tie'];
+    }
+
+    if (isMaximizing) {
+      let bestScore = -Infinity;
+      for (let i = 0; i < newBoard.length; i++) {
+        if (newBoard[i] === null) {
+          newBoard[i] = "O";
+          let score = minimax(newBoard, depth + 1, false);
+          newBoard[i] = null;
+          bestScore = Math.max(score, bestScore);
+        }
+      }
+      return bestScore;
+    } else {
+      let bestScore = Infinity;
+      for (let i = 0; i < newBoard.length; i++) {
+        if (newBoard[i] === null) {
+          newBoard[i] = "X";
+          let score = minimax(newBoard, depth + 1, true);
+          newBoard[i] = null;
+          bestScore = Math.min(score, bestScore);
+        }
+      }
+      return bestScore;
+    }
+  };
+
+  const calculateWinner = (squares) => {
+    const lines = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+    for (let i = 0; i < lines.length; i++) {
+      const [a, b, c] = lines[i];
+      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+        return squares[a];
+      }
+    }
+    return squares.includes(null) ? null : 'tie';
+  };
+
+  const winner = calculateWinner(board);
+  const status = winner
+    ? winner === 'tie' ? "It's a tie!" : `Winner: ${winner}`
+    : `Next player: ${isXTurn ? "X" : "O"}`;
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <h1 className="text-4xl font-bold mb-8">Tic Tac Toe</h1>
-      <div className="grid grid-cols-3 gap-4">
-        {board.map((cell, index) => (
-          <div
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <h1 className="text-2xl font-bold mb-4">Tic Tac Toe</h1>
+      <div className="grid grid-cols-3 gap-2 w-64">
+        {board.map((value, index) => (
+          <button
             key={index}
             onClick={() => handleClick(index)}
-            className="w-24 h-24 flex items-center justify-center border-2 border-gray-300 cursor-pointer text-2xl"
+            className="w-20 h-20 bg-white border-2 border-gray-400 text-2xl font-bold flex items-center justify-center"
           >
-            {cell}
-          </div>
+            {value}
+          </button>
         ))}
       </div>
-      {winner && (
-        <div className="mt-4 text-2xl font-bold">
-          Winner: {winner}
-        </div>
-      )}
-      {isDraw && (
-        <div className="mt-4 text-2xl font-bold">
-          It's a Draw!
-        </div>
-      )}
+      <div className="mt-4">{status}</div>
+      <button
+        onClick={() => {
+          setBoard(initialBoard);
+          setIsXTurn(true);
+        }}
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        Reset
+      </button>
     </div>
   );
-};
+}
 
-export default Game;
+export default App;
